@@ -6,9 +6,13 @@ spring:
     username: postgres
     password: Krantik@123
     driver-class-name: org.postgresql.Driver
+  flyway:
+      clean-on-validation-error: 'true'
+      baseline-on-migrate: 'true'
+      enabled: 'true'
+      locations: classpath:db/migration
   jpa:
     hibernate:
-      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -19,3 +23,11 @@ spring:
     port: 5672
     username: guest
     password: guest
+  cloud:
+    stream:
+      bindings:
+        output:
+          destination: transactionExchange
+          content-type: application/json
+
+

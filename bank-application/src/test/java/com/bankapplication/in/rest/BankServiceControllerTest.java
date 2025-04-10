@@ -1,53 +1,87 @@
 package com.bankapplication.in.rest;
 
 import com.bankapplication.bankservice.core.domain.AccountDTO;
+import com.bankapplication.bankservice.core.domain.AmountTransferDTO;
 import com.bankapplication.bankservice.core.usecase.AccountService;
-import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.springframework.http.MediaType;
-
+import io.restassured.http.ContentType;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import java.math.BigDecimal;
-import java.util.UUID;
-
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.equalTo;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
+
+@SpringBootTest
 public class BankServiceControllerTest {
 
-    @InjectMocks
-    private BankServiceControllerTest bankServiceControllerTest;
 
-    @Mock
-    AccountService accountService;
+@Test
+    public void testTransferAmount_Success(){
 
-    @Test
-    public void testOpenAccount_Success(){
-        AccountDTO accountDTO = new AccountDTO(UUID.randomUUID(),"Rahul Patil", "1234534565", "ifsc1232343454", "Saving", "PAN12323432", "Adharr12323234", new BigDecimal(500000), false);
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(AmountTransferDTO.builder().name("Kartik Patil")
+                        .fromAccount("4673044498").toAccount("1449821784")
+                        .ifscCode("MEDCOMP-18432043").amount(new BigDecimal("600")).build()
+                )
 
-        when(accountService.createAccount(any(AccountDTO.class))).thenReturn("Account Created Successfully");
-
-        given().contentType(MediaType.APPLICATION_JSON_VALUE).body(accountDTO).when().post("/banking-service/user/create-account").then().statusCode(200)
-                .body(equalTo("Account Created Successfully"));
-
-        verify(accountService, times(1)).createAccount(any(AccountDTO.class));
+                .when()
+                .post("/banking-service/user/transfer-amount")
+                .then()
+                .statusCode(201);
     }
 
     @Test
-    public void testOpenAccount_Failure(){
-        AccountDTO accountDTO = new AccountDTO(UUID.randomUUID(),"Rahul Patil", "1234534565", "ifsc1232343454", "Saving", "PAN12323432", "Adharr12323234", new BigDecimal(500000), false);
+    public void testTransferAmount_Failure(){
 
-        when(accountService.createAccount(any(AccountDTO.class))).thenThrow(new RuntimeException("Account Creation Failed"));
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(
+                        AmountTransferDTO.builder().name("Kartik Patil")
+                                .fromAccount("3532874493").toAccount("3532874493")
+                                .ifscCode("MEDCOMP-30694180").amount(new BigDecimal("6000")).build()
 
-        given().contentType(MediaType.APPLICATION_JSON_VALUE).body(accountDTO)
+                )
                 .when()
-                .post("/banking-service/user/create-account").then()
-                .statusCode(500)
-                .body(containsString("Account Creation Failed"));
+                .post("/banking-service/user/transfer-amount")
+                .then()
+                .statusCode(400);
+    }
 
-        verify(accountService, times(1)).createAccount(any(AccountDTO.class));
+
+    @Test
+    public void testOpenAccount_Success(){
+
+        given()
+                .contentType(ContentType.JSON)
+                .body(AccountDTO.builder().name("Rohit Sharma").accountType("Saving")
+                        .aadhaarNumber("123456289581").panNumber("JHGHU9212J").balance(new BigDecimal(57687))
+                        .isLocked(false).build()
+                )
+                .when()
+                .post("/banking-service/user/create-account")
+                .then()
+                .statusCode(201);
+
+    }
+
+    @Test
+    public void testOpenAccount_Failure() {
+
+        given()
+                .log().all()
+                .contentType(ContentType.JSON)
+                .body(
+                        AccountDTO.builder().name("Rohot Sharma").accountType("Saving")
+                                .aadhaarNumber("Aadhaar1234").panNumber("PAN123").balance(new BigDecimal(57687))
+                                .isLocked(false).build()
+                )
+                .when()
+                .post("/banking-service/user/create-account")
+                .then()
+                .statusCode(400);
+
     }
 }

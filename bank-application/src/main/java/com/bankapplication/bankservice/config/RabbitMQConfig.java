@@ -11,34 +11,34 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-public class RabbitMQConfig {
-
-
-    @Bean
-    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(){
-        return new Jackson2JsonMessageConverter();
-    }
-
-    @Bean
-    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
-        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
-        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
-
-        return rabbitTemplate;
-    }
-
-    @Bean
-    public DirectExchange transactionExchange(){
-        return new DirectExchange("transactionExchange");
-    }
-
-    @Bean
-    public Queue transactionQueue(){
-        return new Queue("transactionQueue");
-    }
-
-    public Binding binding(Queue transactionQueue, DirectExchange ex){
-        return BindingBuilder.bind(transactionQueue).to(ex).with("transactionRoutingKey");
-    }
-}
+//@Configuration
+//public class RabbitMQConfig {
+//
+//
+//    @Bean
+//    public Jackson2JsonMessageConverter jackson2JsonMessageConverter(){
+//        return new Jackson2JsonMessageConverter();
+//    }
+//
+//    @Bean
+//    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory){
+//        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+//        rabbitTemplate.setMessageConverter(jackson2JsonMessageConverter());
+//
+//        return rabbitTemplate;
+//    }
+//
+//    @Bean
+//    public DirectExchange transactionExchange(){
+//        return new DirectExchange("transactionExchange");
+//    }
+//
+//    @Bean
+//    public Queue transactionQueue(){
+//        return new Queue("transactionQueue");
+//    }
+//
+//    public Binding binding(Queue transactionQueue, DirectExchange ex){
+//        return BindingBuilder.bind(transactionQueue).to(ex).with("transactionRoutingKey");
+//    }
+//}

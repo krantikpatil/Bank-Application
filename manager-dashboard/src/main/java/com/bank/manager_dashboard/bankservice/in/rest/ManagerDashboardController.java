@@ -1,8 +1,7 @@
 package com.bank.manager_dashboard.bankservice.in.rest;
 
-import com.bank.manager_dashboard.bankservice.core.domain.AmountTransferDTO;
+import com.bank.manager_dashboard.bankservice.core.domain.AmountTransactionDTO;
 import com.bank.manager_dashboard.bankservice.core.usecase.TransactionService;
-import com.bank.manager_dashboard.bankservice.in.queue.TransactionConsumer;
 import com.bank.manager_dashboard.common.exception.AccountNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +14,11 @@ import java.util.List;
 public class ManagerDashboardController {
 
     @Autowired
-    TransactionConsumer transactionConsumer;
-
-    @Autowired
-    AmountTransferDTO amountTransferDTO;
-
-    @Autowired
     TransactionService transactionService;
 
 
-
     @GetMapping("/transactions/{accountNumber}")
-    public ResponseEntity<List<AmountTransferDTO>> fetchTransaction(@PathVariable String accountNumber){
-
+    public ResponseEntity<List<AmountTransactionDTO>> fetchTransaction(@PathVariable String accountNumber){
 
          boolean isExist  =  transactionService.getUserDetails(accountNumber);
 
@@ -35,11 +26,7 @@ public class ManagerDashboardController {
             throw new AccountNotFoundException("User account not exist");
         }
 
-       List<AmountTransferDTO> reponseList =   transactionService.fetchTransaction(accountNumber);
-
-
-      System.out.println("Transactions from database:--");
-      System.out.println(reponseList);
+       List<AmountTransactionDTO> reponseList =   transactionService.fetchTransaction(accountNumber);
 
         return ResponseEntity.ok(reponseList);
     }

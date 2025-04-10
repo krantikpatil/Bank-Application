@@ -1,8 +1,8 @@
 package com.bank.manager_dashboard.bankservice.core.usecase;
 
-import com.bank.manager_dashboard.bankservice.core.domain.AmountTransferDTO;
-import com.bank.manager_dashboard.bankservice.core.domain.AmountTransferEntity;
+import com.bank.manager_dashboard.bankservice.core.domain.*;
 import com.bank.manager_dashboard.bankservice.core.mapper.AccountTransactionMapper;
+import com.bank.manager_dashboard.bankservice.core.mapper.AmountTransactionMapper;
 import com.bank.manager_dashboard.bankservice.core.port.AccountTransactionPort;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,30 +17,32 @@ public class TransactionService {
     @Autowired
     AccountTransactionPort accountTransactionPort;
 
+    @Autowired
+    AmountTransactionMapper amountTransactionMapper;
+
+
     public boolean getUserDetails(String accountNumber){
 
       return accountTransactionPort.fetchAccount(accountNumber);
     }
 
-    public List<AmountTransferDTO> fetchTransaction(String accountNumber){
+    public List<AmountTransactionDTO> fetchTransaction(String accountNumber){
 
 
         LocalDate threeMonthsAgo = LocalDate.now().minusMonths(3);
         String formattedDate = threeMonthsAgo.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-       List<AmountTransferEntity> amountList = accountTransactionPort.fetchTransactionEntity(accountNumber, formattedDate);
+       List<AmountTransaction> transactionList = accountTransactionPort.fetchTransactionEntity(accountNumber, formattedDate);
 
-
-
-       return AccountTransactionMapper.INSTANCE.toDTOList(amountList);
+       return amountTransactionMapper.toDTOList(transactionList);
     }
 
-    public AmountTransferDTO saveTransaction(AmountTransferDTO amountTransferDTO){
+    public void saveTransactionDetails(AmountTransactionDTO amountTransactionDTO){
 
-       AmountTransferEntity amountTransferEntity = AccountTransactionMapper.INSTANCE.amountTransferDTOToAmountTransferEntity(amountTransferDTO);
+      AmountTransaction amountTransaction =  amountTransactionMapper.amountTransactionDTOToAmountTransaction(amountTransactionDTO);
 
-        AmountTransferEntity amountTransferResponse =  accountTransactionPort.storeTransaction(amountTransferEntity);
+        accountTransactionPort.saveTransaction(amountTransaction);
 
-         return AccountTransactionMapper.INSTANCE.amountTransferEntityToAmountTransferDTO(amountTransferResponse);
     }
+
 }

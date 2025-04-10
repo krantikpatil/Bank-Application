@@ -1,8 +1,8 @@
 package com.bank.manager_dashboard.bankservice.out.adapter;
 
-import com.bank.manager_dashboard.bankservice.core.domain.AmountTransferEntity;
+import com.bank.manager_dashboard.bankservice.core.domain.AmountTransaction;
 import com.bank.manager_dashboard.bankservice.core.port.AccountTransactionPort;
-import com.bank.manager_dashboard.bankservice.out.repository.TransactionRepository;
+import com.bank.manager_dashboard.bankservice.out.repository.AmountTransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -11,22 +11,35 @@ import java.util.List;
 @Component
 public class TransactionRepositoryAdapter implements AccountTransactionPort {
 
+
     @Autowired
-    TransactionRepository transactionRepository;
+    AmountTransactionRepository amountTransactionRepository;
+
+
+    @Override
+    public void saveTransaction(AmountTransaction transaction) {
+
+        amountTransactionRepository.save(transaction);
+    }
 
     @Override
     public boolean fetchAccount(String accountNumber) {
 
-        return transactionRepository.existsByFromAccount( accountNumber);
+        return amountTransactionRepository.existsByFromAccount(accountNumber);
     }
 
     @Override
-    public List<AmountTransferEntity> fetchTransactionEntity(String accountNumber, String lastThreeMonthAgo) {
-        return transactionRepository.fetchLastThreeMonthTransaction(accountNumber);
+    public List<AmountTransaction> fetchTransactionEntity(String accountNumber, String lastThreeMonthAgo) {
+        return amountTransactionRepository.fetchLastThreeMonthTransaction(accountNumber);
     }
 
-    @Override
-    public AmountTransferEntity storeTransaction(AmountTransferEntity amountTransferEntity) {
-        return transactionRepository.save(amountTransferEntity);
-    }
+//    public AmountTransaction storeTransaction(AmountTransaction amountTransferEntity) {
+//
+//        System.out.println("This is from adapter class:-- ");
+//
+//        System.out.println(amountTransferEntity);
+//        return amountTransactionRepository.save(amountTransferEntity);
+//    }
+
+
 }

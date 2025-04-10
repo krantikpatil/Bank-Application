@@ -1,6 +1,6 @@
 package com.bank.manager_dashboard.bankservice.core.port;
 
-import com.bank.manager_dashboard.bankservice.core.domain.AmountTransferEntity;
+import com.bank.manager_dashboard.bankservice.core.domain.AmountTransaction;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -9,10 +9,11 @@ import java.util.List;
 public interface AccountTransactionPort {
 
 
+     void saveTransaction(AmountTransaction transaction);
 
     boolean fetchAccount(String accountNumber);
 
-    List<AmountTransferEntity> fetchTransactionEntity(String accountNumber, String lastThreeMonthAgo);
+    List<AmountTransaction> fetchTransactionEntity(String accountNumber, String lastThreeMonthAgo);
 
-    AmountTransferEntity storeTransaction(AmountTransferEntity amountTransferEntity);
+//    AmountTransaction storeTransaction(AmountTransaction amountTransferEntity);
 }
